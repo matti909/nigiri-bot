@@ -1,0 +1,16 @@
+# Rollos Clásicos
+California Roll: 150 ARS
+Philadelphia Roll: 170 ARS
+
+# Rollos Especiales
+Dragon Roll: 200 ARS
+Spicy Tuna Roll: 210 ARS
+
+# Bebidas
+Agua: 80 ARS
+Gaseosa: 100 ARS
+Sake: 250 ARS
+
+# Postres
+Mochi Helado: 120 ARS
+Cheesecake de Té Verde: 150 ARS
