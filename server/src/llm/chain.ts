@@ -53,8 +53,15 @@ export const initializeChain = async () => {
       .describe("Acción específica del bot."),
     order: z
       .object({
-        items: z.array(z.string()).describe("Lista de ítems en el pedido."),
-        totalPrice: z.number().describe("Precio total del pedido."),
+        items: z
+          .array(
+            z.object({
+              name: z.string().describe("Nombre del ítem."),
+              price: z.number().describe("Precio del ítem."),
+              quantity: z.number().min(1).describe("cantidad de este item"),
+            })
+          )
+          .describe("Lista de ítems en el pedido."),
       })
       .optional()
       .describe("Detalles del pedido, requeridos para finalizarlo."),
@@ -67,17 +74,22 @@ export const initializeChain = async () => {
       }
 
       if (query === "finalizar pedido") {
-        if (!order) {
-          return "No se proporcionaron los detalles del pedido. Por favor, especifica los ítems y el precio total.";
+        if (!order || !order.items || order.items.length === 0) {
+          return "No se proporcionaron los detalles del pedido. Por favor, especifica los ítems con sus nombres y precios.";
         }
+
+        // Formatear detalles del pedido para la respuesta
+        const formattedItems = order.items.map(
+          (item) =>
+            `- ${item.name}: $${item.price.toFixed(2)} x${item.quantity}`
+        );
 
         return {
           status: "success",
           message:
             "Gracias por tu pedido. Lo estamos procesando y te confirmaremos los detalles en breve.",
           orderDetails: {
-            items: order.items,
-            totalPrice: order.totalPrice,
+            items: formattedItems,
           },
         };
       }

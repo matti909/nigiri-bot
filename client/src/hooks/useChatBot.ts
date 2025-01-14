@@ -1,66 +1,12 @@
-import { useState, useCallback } from "react";
-
-interface Message {
-  type: "ai";
-  content: string;
-}
-
-interface Conversation {
-  message: string | Message;
-  isHuman: boolean;
-}
-
-const sanitizeMessage = (rawContent: string): string => {
-  try {
-    const parsed = JSON.parse(rawContent);
-
-    if (Array.isArray(parsed.messages)) {
-      return parsed.messages
-        .filter((msg: { type: string }) => msg.type === "ai")
-        .map((msg: { content: string }) => {
-          const sanitizedContent = msg.content.replace(
-            /\[ai\]:.*?Tools:.*?\)\s*/s,
-            ""
-          );
-          return sanitizedContent.replace(/\[ai\]:\s*/, "");
-        })
-        .filter((content: string) => content.trim() !== "")
-        .join("\n");
-    }
-  } catch {
-    return rawContent;
-  }
-
-  return rawContent;
-};
-
-const extractOrder = (rawContent: string): string[] | null => {
-  try {
-    const parsed = JSON.parse(rawContent);
-
-    if (Array.isArray(parsed.messages)) {
-      for (const msg of parsed.messages) {
-        if (msg.type === "ai" && msg.content.includes("botSteps")) {
-          const match = msg.content.match(/botSteps\((.*?)\)/);
-          if (match) {
-            const botStepsData = JSON.parse(match[1]);
-            return botStepsData.order?.items || null;
-          }
-        }
-      }
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
-};
+import { useCallback, useState } from "react";
+import { Conversation, OrderItem } from "../types";
+import { extractOrder, sanitizeMessage } from "../utils";
 
 export const useChatbot = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [aiMessage, setAiMessage] = useState("");
   const [userMessage, setUserMessage] = useState("");
-  const [order, setOrder] = useState<string[] | null>(null);
+  const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,8 +55,12 @@ export const useChatbot = () => {
         }
 
         const sanitizedMessage = sanitizeMessage(streamedMessage);
+
         const extractedOrder = extractOrder(streamedMessage);
-        setOrder(extractedOrder);
+
+        if (extractedOrder) {
+          setOrder(extractedOrder);
+        }
 
         setConversations((prev) => [
           ...prev,
