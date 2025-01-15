@@ -45,3 +45,45 @@ export const extractOrder = (rawContent: string): OrderItem[] | null => {
 
   return null;
 };
+
+export const submitOrder = async (order: OrderItem[] | null, uri: string) => {
+  if (!order || order.length === 0) {
+    console.error("El pedido está vacío");
+    alert("El pedido está vacío");
+    return;
+  }
+
+  const requestPayload = {
+    items: order.map((item) => ({
+      details: {
+        name: item.name,
+        price: item.price,
+      },
+      quantity: item.quantity,
+    })),
+  };
+
+  try {
+    const response = await fetch(uri, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestPayload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Orden enviada exitosamente:", data);
+    alert("Orden enviada con éxito");
+  } catch (error) {
+    console.error("Error al enviar la orden:", error);
+    alert("Hubo un problema al enviar la orden");
+  }
+};
+
+export const calculateTotal = (items: OrderItem[]) =>
+  items.reduce((acc, item) => acc + item.price * item.quantity, 0);

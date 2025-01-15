@@ -8,22 +8,27 @@ type Props = {
 
 export const Conversations = ({ conversations, loading, aiMessage }: Props) => {
   return (
-    <div className="overflow-y-auto p-4 space-y-2 w-full max-w-md h-96 rounded border">
-      {conversations.map((conv, index) => (
-        <div
-          key={index}
-          className={`p-2 rounded ${
-            conv.isHuman ? "bg-blue-800 text-right" : "bg-gray-800 text-left"
-          }`}
-        >
-          {conv.message.toString()}
-        </div>
-      ))}
-      {loading && (
-        <div className="p-2 text-left bg-gray-800 rounded">
-          {aiMessage || "Cargando..."}
-        </div>
-      )}
-    </div>
+    <section>
+      <h1 className="text-2xl font-bold text-sushi-paper">Nigiri Chatbot</h1>
+      <div className="overflow-y-auto p-4 space-y-4 w-full max-w-md h-96 rounded-lg border border-border bg-background">
+        {conversations.map((conv, index) => (
+          <div
+            key={index}
+            className={`p-3 rounded-lg max-w-[80%] ${
+              conv.isHuman
+                ? "bg-sushi-accent text-white self-end ml-auto"
+                : "bg-zinc-800 text-sushi-text"
+            }`}
+          >
+            {conv.message.toString()}
+          </div>
+        ))}
+        {loading && (
+          <div className="p-3 rounded-lg bg-zinc-800 text-sushi-muted">
+            {aiMessage || "Cargando..."}
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
