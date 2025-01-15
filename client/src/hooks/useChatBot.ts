@@ -4,10 +4,10 @@ import { extractOrder, sanitizeMessage } from "../utils";
 
 export const useChatbot = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [aiMessage, setAiMessage] = useState("");
   const [userMessage, setUserMessage] = useState("");
-  const [order, setOrder] = useState<OrderItem[] | null>(null);
+  const [aiMessage, setAiMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const apiUrl = "http://localhost:4000/completion";
@@ -61,6 +61,7 @@ export const useChatbot = () => {
         if (extractedOrder) {
           setOrder(extractedOrder);
         }
+        console.log(order);
 
         setConversations((prev) => [
           ...prev,

@@ -1,18 +1,19 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const orderSchema = new Schema({
-  items: {
-    type: [String],
-    required: true,
+const OrderItemSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  details: {
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
   },
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  quantity: { type: Number, required: true },
 });
 
-module.exports = model("Order", orderSchema);
+const OrderSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  items: [OrderItemSchema],
+  createdAt: { type: Date, default: Date.now },
+  status: { type: String, default: "pending" },
+});
+
+export const Order = mongoose.model("Order", OrderSchema);

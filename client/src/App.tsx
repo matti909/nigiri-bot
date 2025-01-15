@@ -14,27 +14,23 @@ const App = () => {
   } = useChatbot();
 
   return (
-    <div className="grid grid-cols-2 place-items-center p-4">
+    <div className="flex flex-col items-center p-4">
       <h1 className="text-2xl font-bold">Nigiri Chatbot</h1>
 
-      <section>
-        <Orders error={error!} order={order} />
-      </section>
+      <Conversations
+        aiMessage={aiMessage}
+        conversations={conversations}
+        loading={loading}
+      />
 
-      <section>
-        <Conversations
-          aiMessage={aiMessage}
-          conversations={conversations}
-          loading={loading}
-        />
+      <ChatInput
+        handleSubmit={handleSubmit}
+        setUserMessage={setUserMessage}
+        userMessage={userMessage}
+        loading={loading}
+      />
 
-        <ChatInput
-          handleSubmit={handleSubmit}
-          setUserMessage={setUserMessage}
-          userMessage={userMessage}
-          loading={loading}
-        />
-      </section>
+      <Orders error={error!} order={order} />
     </div>
   );
 };

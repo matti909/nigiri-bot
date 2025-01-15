@@ -1,4 +1,4 @@
-import type { Conversation } from "../hooks";
+import { Conversation } from "../types";
 
 type Props = {
   conversations: Conversation[];
