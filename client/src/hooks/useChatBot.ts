@@ -61,7 +61,6 @@ export const useChatbot = () => {
         if (extractedOrder) {
           setOrder(extractedOrder);
         }
-        console.log(order);
 
         setConversations((prev) => [
           ...prev,

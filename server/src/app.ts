@@ -1,9 +1,10 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
-//import connectDB from "./config/db";
+import connectDB from "./config/db";
 import { initializeChain } from "./llm/chain";
 import completion from "./routes/completion";
+import order from "./routes/order";
 
 const app: Application = express();
 const port = process.env.PORT || 4000;
@@ -18,7 +19,7 @@ const port = process.env.PORT || 4000;
   }
 })();
 
-//connectDB();
+connectDB();
 
 app.use(express.json({ limit: "10mb" }));
 
@@ -27,6 +28,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/completion", completion);
+app.use("/orders", order);
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("Welcome to Express & TypeScript Server");
