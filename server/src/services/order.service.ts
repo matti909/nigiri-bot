@@ -7,6 +7,32 @@ export interface OrderItem {
   quantity: number;
 }
 
+interface OrderDetails {
+  name: string;
+  price: number;
+}
+
+interface OrderItem2 {
+  id: string;
+  details: OrderDetails;
+  quantity: number;
+  _id: string;
+}
+
+interface Order {
+  id: string;
+  items: OrderItem2[];
+  createdAt: string;
+  status: string;
+  _id: string;
+  __v: number;
+}
+
+export interface OrderResponse {
+  message: string;
+  order: Order;
+}
+
 export const createNewOrder = async (items: OrderItem[]) => {
   const order = {
     id: uuidv4(),
@@ -20,4 +46,8 @@ export const createNewOrder = async (items: OrderItem[]) => {
 
   const savedOrder = await new Order(order).save();
   return savedOrder;
+};
+
+export const getAllOrders = async (): Promise<OrderResponse[]> => {
+  return await Order.find();
 };

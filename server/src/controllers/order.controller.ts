@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { createNewOrder } from "../services/order.service";
+import { createNewOrder, getAllOrders } from "../services/order.service";
 
 export const createOrderHandler = async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const { items } = req.body;
@@ -19,6 +18,17 @@ export const createOrderHandler = async (
     const order = await createNewOrder(items);
     res.status(201).json({ message: "Orden creada exitosamente", order });
   } catch (error) {
-    next(error);
+    //next(error);
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
+
+export const getAll = async (_req: any, res: Response) => {
+  try {
+    const order = await getAllOrders();
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(400).send(error);
   }
 };

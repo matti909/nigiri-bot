@@ -9,7 +9,9 @@ type Props = {
 export const Conversations = ({ conversations, loading, aiMessage }: Props) => {
   return (
     <section>
-      <h1 className="text-2xl font-bold text-sushi-paper">Nigiri Chatbot</h1>
+      <h1 className="py-4 m-2 text-2xl font-bold text-balance text-sushi-paper">
+        Nigiri Chatbot 🍣
+      </h1>
       <div className="overflow-y-auto p-4 space-y-4 w-full max-w-md h-96 rounded-lg border border-border bg-background">
         {conversations.map((conv, index) => (
           <div
