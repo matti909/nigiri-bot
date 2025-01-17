@@ -11,10 +11,11 @@ const App = () => {
     error,
     order,
     aiMessage,
+    handleReset,
   } = useChatbot();
 
   return (
-    <div className="flex flex-row items-start max-w-[900px] mx-auto px-4 m-4 min-h-screen bg-transparent text-sushi-text">
+    <div className="flex flex-col sm:flex-row items-start max-w-[900px] mx-auto px-4 m-4 min-h-screen bg-transparent text-sushi-text">
       <section className="flex-1 h-auto">
         <Conversations
           aiMessage={aiMessage}
@@ -31,7 +32,7 @@ const App = () => {
       </section>
 
       <section>
-        <Orders error={error!} order={order} />
+        <Orders error={error!} order={order} handleReset={handleReset} />
       </section>
     </div>
   );

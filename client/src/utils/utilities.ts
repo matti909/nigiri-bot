@@ -85,5 +85,8 @@ export const submitOrder = async (order: OrderItem[] | null, uri: string) => {
   }
 };
 
-export const calculateTotal = (items: OrderItem[]) =>
-  items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+export const calculateTotal = <T extends { price: number; quantity: number }>(
+  items: T[]
+): number => {
+  return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+};

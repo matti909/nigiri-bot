@@ -12,6 +12,10 @@ export const useChatbot = () => {
 
   const apiUrl = "http://localhost:4000/completion";
 
+  const handleReset = () => {
+    setOrder(null);
+  };
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -87,6 +91,8 @@ export const useChatbot = () => {
     loading,
     error,
     setUserMessage,
+    setOrder,
     handleSubmit,
+    handleReset,
   };
 };

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Conversation } from "../types";
 
 type Props = {
@@ -7,6 +8,12 @@ type Props = {
 };
 
 export const Conversations = ({ conversations, loading, aiMessage }: Props) => {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversations, loading]);
+
   return (
     <section>
       <h1 className="py-4 m-2 text-2xl font-bold text-balance text-sushi-paper">
@@ -30,6 +37,8 @@ export const Conversations = ({ conversations, loading, aiMessage }: Props) => {
             {aiMessage || "Cargando..."}
           </div>
         )}
+        {/* Elemento sentinela para el scroll */}
+        <div ref={bottomRef} />
       </div>
     </section>
   );
