@@ -72,6 +72,14 @@ El frontend consume el backend para ofrecer una experiencia fluida al usuario.
 
 5. El backend estará disponible en [http://localhost:4000](http://localhost:4000).
 
+6. Endpoints disponibles:
+
+   [POST] [http://localhost:4000/completions](http://localhost:4000).
+
+   [POST] [http://localhost:4000/orders](http://localhost:4000).
+
+   [GET] [http://localhost:4000/orders/getorders](http://localhost:4000).
+
 ## Despliegue en la nube
 
 ### Frontend
