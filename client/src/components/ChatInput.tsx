@@ -15,22 +15,23 @@ export const ChatInput = ({
 }: Props) => {
   return (
     <form
-      className="flex items-center mt-4 space-x-2 w-full max-w-md"
+      className="flex items-center gap-3 mt-6 w-full"
       onSubmit={handleSubmit}
     >
       <input
         type="text"
         value={userMessage}
         onChange={(e) => setUserMessage(e.target.value)}
-        placeholder="Escribe tu mensaje..."
-        className="flex-1 p-2 rounded-lg border border-input bg-background text-sushi-text placeholder-muted focus:ring-2 focus:ring-sushi-accent"
+        placeholder="Escribe tu mensaje aquí... (Ej: 'Quiero 2 California Roll')"
+        className="flex-1 px-5 py-4 text-base rounded-xl border-2 border-input bg-background text-sushi-text placeholder-muted focus:ring-2 focus:ring-sushi-accent focus:border-sushi-accent transition-all shadow-sm"
+        autoFocus
       />
       <button
         type="submit"
-        className={`px-4 py-2 rounded-lg text-white transition ${
+        className={`px-6 py-4 text-base font-medium rounded-xl text-white transition-all shadow-md ${
           loading
-            ? "cursor-not-allowed bg-muted"
-            : "bg-sushi-accent hover:bg-sushi-accent/90"
+            ? "cursor-not-allowed bg-muted opacity-70"
+            : "bg-sushi-accent hover:bg-sushi-accent/90 hover:shadow-lg active:scale-95"
         }`}
         disabled={loading}
       >

@@ -15,26 +15,35 @@ export const Conversations = ({ conversations, loading, aiMessage }: Props) => {
   }, [conversations, loading]);
 
   return (
-    <section>
-      <h1 className="py-4 m-2 text-2xl font-bold text-balance text-sushi-paper">
-        Nigiri Chatbot 🍣
+    <section className="flex flex-col">
+      <h1 className="py-6 px-2 text-3xl font-bold text-sushi-paper">
+        🍣 Nigiri Chatbot
       </h1>
-      <div className="overflow-y-auto p-4 space-y-4 w-full max-w-md h-96 rounded-lg border border-border bg-background">
+      <div className="overflow-y-auto p-6 space-y-4 rounded-xl border border-border bg-background shadow-lg h-[600px] lg:h-[calc(100vh-220px)]">
+        {conversations.length === 0 && !loading && (
+          <div className="flex items-center justify-center h-full text-center text-muted">
+            <p className="text-lg">
+              ¡Hola! 👋 Escribe un mensaje para comenzar...
+            </p>
+          </div>
+        )}
         {conversations.map((conv, index) => (
           <div
             key={index}
-            className={`p-3 rounded-lg max-w-[80%] ${
+            className={`p-4 rounded-xl max-w-[85%] shadow-md text-base leading-relaxed ${
               conv.isHuman
                 ? "bg-sushi-accent text-white self-end ml-auto"
                 : "bg-zinc-800 text-sushi-text"
             }`}
           >
-            {conv.message.toString()}
+            <div className="whitespace-pre-wrap break-words">
+              {conv.message.toString()}
+            </div>
           </div>
         ))}
         {loading && (
-          <div className="p-3 rounded-lg bg-zinc-800 text-sushi-muted">
-            {aiMessage || "Cargando..."}
+          <div className="p-4 rounded-xl bg-zinc-800 text-sushi-muted shadow-md animate-pulse">
+            {aiMessage || "Escribiendo..."}
           </div>
         )}
         {/* Elemento sentinela para el scroll */}

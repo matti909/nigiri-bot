@@ -49,95 +49,120 @@ export const Orders = ({
 
     try {
       await dispatch(addOrder(order)).unwrap();
-      console.log("Pedido enviado y estado reiniciado.");
+      console.log("Pedido enviado exitosamente.");
+
+      // Limpiar el pedido actual
       if (handleReset) {
         handleReset();
       }
+
+      // Refrescar la lista de pedidos
+      dispatch(fetchOrders());
     } catch (err) {
       console.error("Error al enviar el pedido:", err);
     }
   };
 
   return (
-    <div className="mt-6 w-full max-w-md">
-      {error && <p className="text-sm text-red-500">{error}</p>}
+    <div className="w-full h-full space-y-4">
+      {error && (
+        <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      {/* Pedido Actual */}
       {order?.length ? (
-        <div className="p-4 mt-16 rounded-lg border border-border bg-background">
-          <h3 className="text-lg font-bold text-sushi-paper">
-            Detalles del Pedido
+        <div className="p-5 rounded-xl border border-border bg-background shadow-lg">
+          <h3 className="text-xl font-bold text-sushi-paper mb-4">
+            📋 Pedido Actual
           </h3>
-          <ul className="mt-2 space-y-2 text-sushi-text">
+          <ul className="space-y-3 text-sushi-text">
             {order.map((item, index) => (
-              <li key={index}>
-                - {item.name} (x{item.quantity}): $
-                {(item.price * item.quantity).toFixed(2)} ($
-                {item.price.toFixed(2)} c/u)
+              <li key={index} className="flex flex-col gap-1 pb-3 border-b border-zinc-700 last:border-0">
+                <div className="flex justify-between items-start">
+                  <span className="font-medium">{item.name}</span>
+                  <span className="text-sushi-accent font-bold">
+                    ${(item.price * item.quantity).toFixed(0)}
+                  </span>
+                </div>
+                <div className="text-sm text-muted">
+                  x{item.quantity} × ${item.price.toFixed(0)} c/u
+                </div>
               </li>
             ))}
           </ul>
-          <p className="mt-4 font-bold text-sushi-paper">
-            Total: ${calculateTotal(order).toFixed(2)}
-          </p>
+          <div className="mt-4 pt-4 border-t border-zinc-700">
+            <div className="flex justify-between items-center text-lg font-bold text-sushi-paper">
+              <span>Total:</span>
+              <span className="text-sushi-accent">
+                ${calculateTotal(order).toFixed(0)}
+              </span>
+            </div>
+          </div>
           <button
             onClick={handleOrderSubmit}
-            className={`px-4 py-2 mt-4 text-white rounded-lg transition 
-            ${
+            className={`w-full px-4 py-3 mt-4 text-white font-medium rounded-xl transition-all shadow-md ${
               loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-sushi-accent hover:bg-sushi-accent/90"
-            }
-          `}
+                ? "bg-gray-400 cursor-not-allowed opacity-70"
+                : "bg-sushi-accent hover:bg-sushi-accent/90 hover:shadow-lg active:scale-95"
+            }`}
             disabled={loading}
           >
-            {loading ? "Enviando..." : "Enviar Pedido"}
+            {loading ? "Enviando..." : "Confirmar Pedido"}
           </button>
         </div>
       ) : (
-        <p className="text-sm text-gray-500">No hay ordenes!.</p>
+        <div className="p-5 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30 text-center text-muted">
+          <p className="text-sm">Sin pedido pendiente</p>
+        </div>
       )}
 
-      {/* section order success */}
-      <section className="p-4 mt-4 rounded-lg border border-border bg-sushi-bg">
-        {error2 && <p className="text-sm text-red-500">{error2}</p>}
+      {/* Historial de Pedidos */}
+      <div className="p-5 rounded-xl border border-border bg-sushi-bg shadow-lg overflow-hidden">
+        {error2 && (
+          <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg">
+            {error2}
+          </div>
+        )}
+
+        <h3 className="text-xl font-bold text-sushi-paper mb-4">
+          📦 Historial de Pedidos
+        </h3>
+
         {orderList?.length ? (
-          <div className="mt-2 space-y-4">
-            <h3 className="text-lg font-bold text-sushi-paper">
-              Pedidos pendientes
-            </h3>
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
             {orderList.map((order, index) => (
               <div
                 key={index}
-                className="flex flex-col p-4 space-y-2 rounded-lg shadow-md bg-sushi-paper"
+                className="p-4 space-y-3 rounded-lg shadow-sm bg-sushi-paper border border-zinc-700"
               >
-                <div className="flex flex-col justify-between items-center">
-                  <span className="font-bold text-sushi-accent">
+                <div className="flex justify-between items-start">
+                  <span className="px-2 py-1 text-xs font-bold uppercase bg-sushi-accent/20 text-sushi-accent rounded">
                     {order.status}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    Orden: #{order.id}
-                  </span>
+                  <span className="text-xs text-gray-500">#{order.id.slice(0, 8)}</span>
                 </div>
-                <ul className="space-y-2 text-sushi-text">
+                <ul className="space-y-2">
                   {order.items.map((item) => (
                     <li
                       key={item.id}
-                      className="flex justify-between text-sushi-muted"
+                      className="flex justify-between text-sm text-sushi-muted"
                     >
-                      <span>{item.details.name}</span>
-                      <span>${item.details.price.toFixed(2)}</span>
+                      <span>{item.details.name} x{item.quantity}</span>
+                      <span className="font-medium">${item.details.price.toFixed(0)}</span>
                     </li>
                   ))}
                 </ul>
-                {/* <p className="font-bold text-sushi-paper">
-                  Total: ${calculateTotal(order.items).toFixed(2)}
-                </p> */}
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-500">No hay órdenes disponibles.</p>
+          <div className="py-8 text-center text-muted">
+            <p className="text-sm">No hay pedidos registrados</p>
+          </div>
         )}
-      </section>
+      </div>
     </div>
   );
 };

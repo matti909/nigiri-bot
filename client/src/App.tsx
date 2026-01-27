@@ -16,8 +16,9 @@ const App = () => {
   } = useChatbot();
 
   return (
-    <div className="flex flex-col sm:flex-row items-start max-w-[900px] mx-auto px-4 m-4 min-h-screen bg-transparent text-sushi-text">
-      <section className="flex-1 h-auto">
+    <div className="flex flex-col lg:flex-row gap-6 max-w-[1600px] mx-auto px-6 py-4 min-h-screen bg-transparent text-sushi-text">
+      {/* Chat Section - Ocupa la mayor parte del espacio */}
+      <section className="flex-1 flex flex-col min-h-screen lg:min-h-0">
         <Conversations
           aiMessage={aiMessage}
           conversations={conversations}
@@ -32,14 +33,15 @@ const App = () => {
         />
       </section>
 
-      <section>
+      {/* Orders Sidebar - Más compacta */}
+      <aside className="lg:w-96 shrink-0">
         <Orders
           error={error!}
           order={order}
           handleReset={handleReset}
           orderCreatedTrigger={orderCreatedTrigger}
         />
-      </section>
+      </aside>
     </div>
   );
 };
