@@ -1,22 +1,58 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Conversation, OrderItem } from "../types";
 import { extractOrder, sanitizeMessage } from "../utils";
 
-const generateSessionId = () => {
-  return `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+// Helper: obtener datos de localStorage con TTL de 1 día
+const getStorageWithTTL = <T,>(key: string): T | null => {
+  try {
+    const timestamp = localStorage.getItem("chatbot_timestamp");
+    if (!timestamp || Date.now() - parseInt(timestamp) > ONE_DAY_MS) {
+      localStorage.clear(); // Limpiar todo si expiró
+      return null;
+    }
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+};
+
+// Helper: guardar en localStorage y actualizar timestamp
+const setStorageWithTTL = (key: string, value: any) => {
+  localStorage.setItem(key, JSON.stringify(value));
+  localStorage.setItem("chatbot_timestamp", Date.now().toString());
 };
 
 export const useChatbot = () => {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>(
+    () => getStorageWithTTL<Conversation[]>("chatbot_conversations") || []
+  );
   const [userMessage, setUserMessage] = useState("");
   const [aiMessage, setAiMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState<OrderItem[] | null>(null);
+  const [order, setOrder] = useState<OrderItem[] | null>(
+    () => getStorageWithTTL<OrderItem[]>("chatbot_order")
+  );
   const [error, setError] = useState<string | null>(null);
-  const [orderCreatedTrigger, setOrderCreatedTrigger] = useState(0); // Trigger para refetch
+  const [orderCreatedTrigger, setOrderCreatedTrigger] = useState(0);
 
-  // Generar sessionId una sola vez y mantenerlo durante toda la sesión
-  const sessionId = useMemo(() => generateSessionId(), []);
+  const sessionId = useMemo(() => {
+    const stored = getStorageWithTTL<string>("chatbot_session_id");
+    if (stored) return stored;
+    const newId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 15)}`;
+    setStorageWithTTL("chatbot_session_id", newId);
+    return newId;
+  }, []);
+
+  useEffect(() => {
+    if (conversations.length) setStorageWithTTL("chatbot_conversations", conversations);
+  }, [conversations]);
+
+  useEffect(() => {
+    order ? setStorageWithTTL("chatbot_order", order) : localStorage.removeItem("chatbot_order");
+  }, [order]);
 
   const apiUrl = "http://localhost:4000/completion";
 
