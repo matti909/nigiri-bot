@@ -13,17 +13,31 @@ type Props = {
   error?: string;
   order: OrderItem[] | null;
   handleReset?: () => void;
+  orderCreatedTrigger?: number;
 };
 
-export const Orders = ({ order, error, handleReset }: Props) => {
+export const Orders = ({
+  order,
+  error,
+  handleReset,
+  orderCreatedTrigger,
+}: Props) => {
   const { orderList, loading, error2 } = useAppSelector(
     (state) => state.employeeKey
   );
   const dispatch = useAppDispatch();
 
+  // Fetch inicial al montar
   useEffect(() => {
     dispatch(fetchOrders()).unwrap();
   }, [dispatch]);
+
+  // Refetch cuando el LLM cree un pedido
+  useEffect(() => {
+    if (orderCreatedTrigger && orderCreatedTrigger > 0) {
+      dispatch(fetchOrders()).unwrap();
+    }
+  }, [orderCreatedTrigger, dispatch]);
 
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

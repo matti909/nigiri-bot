@@ -1,6 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Conversation, OrderItem } from "../types";
 import { extractOrder, sanitizeMessage } from "../utils";
+
+const generateSessionId = () => {
+  return `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+};
 
 export const useChatbot = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -9,6 +13,10 @@ export const useChatbot = () => {
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [orderCreatedTrigger, setOrderCreatedTrigger] = useState(0); // Trigger para refetch
+
+  // Generar sessionId una sola vez y mantenerlo durante toda la sesión
+  const sessionId = useMemo(() => generateSessionId(), []);
 
   const apiUrl = "http://localhost:4000/completion";
 
@@ -38,7 +46,10 @@ export const useChatbot = () => {
         const res = await fetch(apiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: userMessage }),
+          body: JSON.stringify({
+            text: userMessage,
+            sessionId
+          }),
         });
 
         if (!res.ok) {
@@ -66,6 +77,12 @@ export const useChatbot = () => {
           setOrder(extractedOrder);
         }
 
+        // Detectar si el LLM creó un pedido con el tool create_order
+        if (streamedMessage.includes("create_order")) {
+          // Activar trigger para que Orders refetch
+          setOrderCreatedTrigger((prev) => prev + 1);
+        }
+
         setConversations((prev) => [
           ...prev,
           {
@@ -90,6 +107,7 @@ export const useChatbot = () => {
     order,
     loading,
     error,
+    orderCreatedTrigger, // Para que Orders detecte cuando se creó un pedido
     setUserMessage,
     setOrder,
     handleSubmit,

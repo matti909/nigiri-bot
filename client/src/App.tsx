@@ -12,6 +12,7 @@ const App = () => {
     order,
     aiMessage,
     handleReset,
+    orderCreatedTrigger,
   } = useChatbot();
 
   return (
@@ -32,7 +33,12 @@ const App = () => {
       </section>
 
       <section>
-        <Orders error={error!} order={order} handleReset={handleReset} />
+        <Orders
+          error={error!}
+          order={order}
+          handleReset={handleReset}
+          orderCreatedTrigger={orderCreatedTrigger}
+        />
       </section>
     </div>
   );

@@ -37,8 +37,12 @@ export const createNewOrder = async (items: OrderItem[]) => {
   const order = {
     id: uuidv4(),
     items: items.map((item) => ({
-      ...item,
       id: uuidv4(),
+      details: {
+        name: item.name,
+        price: item.price,
+      },
+      quantity: item.quantity,
     })),
     createdAt: new Date(),
     status: "pending",

@@ -30,16 +30,26 @@ export const extractOrder = (rawContent: string): OrderItem[] | null => {
 
     if (Array.isArray(parsed.messages)) {
       for (const msg of parsed.messages) {
-        if (msg.type === "ai" && msg.content.includes("botSteps")) {
-          const match = msg.content.match(/botSteps\((.*?)\)/);
+        if (msg.type === "ai" && msg.content.includes("create_order")) {
+          // Buscar el tool call de create_order
+          const match = msg.content.match(/create_order\((.*?)\)/s);
           if (match) {
-            const botStepsData = JSON.parse(match[1]);
-            return botStepsData.order?.items || null;
+            const orderData = JSON.parse(match[1]);
+            return orderData.items || null;
+          }
+        }
+        // También buscar en calculate_total para mostrar preview
+        if (msg.type === "ai" && msg.content.includes("calculate_total")) {
+          const match = msg.content.match(/calculate_total\((.*?)\)/s);
+          if (match) {
+            const calcData = JSON.parse(match[1]);
+            return calcData.items || null;
           }
         }
       }
     }
-  } catch {
+  } catch (error) {
+    console.error("Error extrayendo pedido:", error);
     return null;
   }
 

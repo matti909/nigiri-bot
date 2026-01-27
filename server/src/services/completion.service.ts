@@ -1,15 +1,22 @@
 import { prettyPrint } from "../utils";
-import { v4 as uuidv4 } from "uuid";
 
-const threadConfig = {
-  configurable: { thread_id: uuidv4() },
-  streamMode: "values" as const,
-};
-
-export const chatCompletions = async (userInput: string, graph: any) => {
+export const chatCompletions = async (
+  userInput: string,
+  graph: any,
+  sessionId: string
+) => {
   if (!graph) {
     throw new Error("El grafo no está inicializado.");
   }
+
+  if (!sessionId) {
+    throw new Error("sessionId es requerido para mantener el contexto de la conversación.");
+  }
+
+  const threadConfig = {
+    configurable: { thread_id: sessionId },
+    streamMode: "values" as const,
+  };
 
   const inputs = { messages: [{ role: "user", content: userInput }] };
   const response: { messages: any[] } = { messages: [] };
